@@ -80,6 +80,7 @@ function trackimage(){
 
 function matchFeatures(){
    try {
+    matches = new cv.DMatchVectorVector();
     matcher.knnMatch(desc_target,desc_video,matches,2)
     // //consloe.log(matches);
     let good_matches = new cv.DMatchVector();
@@ -91,25 +92,37 @@ function matchFeatures(){
                         good_matches.push_back(dMatch1);
                     }
     }
+    matches.delete();
     let points1 = [];
     let points2 = [];
     for (let i = 0; i < good_matches.size(); i++) {
         try{
-        points1.push(kp_target.get(good_matches.get(i).queryIdx ).pt );
-            points2.push(kp_video.get(good_matches.get(i).trainIdx ).pt );}
+            points1.push(kp_target.get(good_matches.get(i).queryIdx).pt.x);
+            points1.push(kp_target.get(good_matches.get(i).queryIdx).pt.y);
+            points2.push(kp_video.get(good_matches.get(i).trainIdx).pt.x);
+            points2.push(kp_video.get(good_matches.get(i).trainIdx).pt.y);
+        
+        }
             catch(e){
                 console.log('error',e);
             }
 
     }
+    // console.log('goog matchces',good_matches.size());
+    good_matches.delete();
+    // console.log(points1);
+    points1 = points1.filter((item)=>{return item!==NaN;})
+    points2 = points2.filter((item)=>{return item!==NaN;})
     let mat1 = cv.matFromArray(points1.length, 3, cv.CV_32F, points1);
     let mat2 = cv.matFromArray(points2.length, 3, cv.CV_32F, points2);
+    // console.log('after',points1);
+    // console.log('mats',mat1.data32F,mat2.data32F);
     let h = cv.findHomography(mat1, mat2, cv.RANSAC);
     let pose  =  homographyTo3d(h);
     //consloe.log('homogrphy',h);
     // consloe.log('pose',pose);
 
-    good_matches.delete();
+    // good_matches.delete();
    } catch (error) {
     console.log(error)
    }
@@ -143,7 +156,7 @@ Hmat.elements = h;
 var HmatInv =  new  THREE.Matrix3();
 HmatInv.elements = h;
 HmatInv.invert();
-console.log(H.data64F,Hmat.toArray(),HmatInv.toArray());
+console.log(h,H.data64F,Hmat.toArray(),HmatInv.toArray());
 
 // const Hinv = new cv.Mat()
 
