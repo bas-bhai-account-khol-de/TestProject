@@ -120,7 +120,7 @@ function matchFeatures(){
     let h = cv.findHomography(mat1, mat2, cv.RANSAC);
     let pose  =  homographyTo3d(h);
     //consloe.log('homogrphy',h);
-    // consloe.log('pose',pose);
+    console.log('pose',pose);
 
     // good_matches.delete();
    } catch (error) {
@@ -155,8 +155,24 @@ var Hmat = new THREE.Matrix3();
 Hmat.elements = h;
 var HmatInv =  new  THREE.Matrix3();
 HmatInv.elements = h;
-HmatInv.invert();
-console.log(h,H.data64F,Hmat.toArray(),HmatInv.toArray());
+HmatInv= HmatInv.invert();
+var pos =  new THREE.Vector3(0,0,1);
+const result = new THREE.Vector3();
+result.copy(pos).applyMatrix3(HmatInv);
+console.log(result);
+const transform = new THREE.Matrix4();
+transform.set(
+    h[0], h[3], 0, h[6],
+    h[1], h[4], 0, h[7],
+    0, 0, 1, 0,
+    h[2], h[5], 0, 1
+  );
+  console.log(h);
+  return transform;
+// const r1 = new THREE.Vector3().crossVectors()
+
+
+// console.log(h,H.data64F,Hmat.toArray(),HmatInv.toArray());
 
 // const Hinv = new cv.Mat()
 
