@@ -28,6 +28,7 @@ function animate()
     requestAnimationFrame(animate);
 }
 window.receive = function(msg){
+    console.log(msg);
     var loc =JSON.parse(msg);
     console.log(loc)
     cube.rotateX(20);
