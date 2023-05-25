@@ -1,5 +1,21 @@
 
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+// camera.rotation.set(0,3.14,0);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
+// Create the cube geometry
+const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+// Create the material
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+// Create the mesh and add it to the scene
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
 const constraints = {
     video: {
@@ -120,8 +136,8 @@ function matchFeatures(){
     let h = cv.findHomography(mat1, mat2, cv.RANSAC);
     let pose  =  homographyTo3d(h);
     //consloe.log('homogrphy',h);
-    console.log('pose',pose);
-
+    // console.log('pose',pose);
+    return pose;
     // good_matches.delete();
    } catch (error) {
     console.log(error)
@@ -132,9 +148,23 @@ function matchFeatures(){
 function getVideoFeatures(){
     cap.read(frame);
     orb.detectAndCompute(frame,new cv.Mat(),kp_video,desc_video)
-    matchFeatures()
+    var t = matchFeatures()
     cv.drawKeypoints(frame,kp_video,frame,[0, 255, 0, 255])
     cv.imshow('canvasOutput',frame);
+    try{
+        var pos  =  new THREE.Vector3();
+        t.decompose(pos,new THREE.Quaternion(),new THREE.Vector3())
+        if
+        (pos.x !== NaN  && pos.y !==NaN)
+        {
+            console.log(pos);
+            cube.position.set(pos.x,pos.y,pos.z);
+        } 
+    }catch(e){console.log(e);}
+    // camera.lookAt(cube);
+    console.log('t',t)
+    console.log(cube.position)
+    renderer.render(scene, camera);
     requestAnimationFrame(getVideoFeatures);
     
 }
@@ -159,7 +189,7 @@ HmatInv= HmatInv.invert();
 var pos =  new THREE.Vector3(0,0,1);
 const result = new THREE.Vector3();
 result.copy(pos).applyMatrix3(HmatInv);
-console.log(result);
+// console.log(result);
 const transform = new THREE.Matrix4();
 transform.set(
     h[0], h[3], 0, h[6],
