@@ -29,10 +29,10 @@ function animate()
 }
 
 window.receive = function(msg){
+    animate()
     var loc =JSON.parse(msg);
     window.Unity.call(loc);
     cube.rotateX(20);
     // cube.position.set(-1*parseFloat(loc.px),-1*parseFloat(loc.pz),1*parseFloat(loc.py));
     // camera.position.set(-1*parseFloat(loc.pcx),-1*parseFloat(loc.pcz),1*parseFloat(loc.pcy));
-    animate()
 }
