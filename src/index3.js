@@ -21,11 +21,17 @@ scene.add(cube);
 animate()
 function animate()
 {
-   
+    // cube.rotateX(20);
     renderer.render(scene, camera);
-    requestAnimationFrame(getVideoFeatures);
+    console.log("hi")
+    window.Unity.call("hi");
+    requestAnimationFrame(animate);
 }
 window.receive = function(msg){
     var loc =JSON.parse(msg);
     console.log(loc)
+    cube.rotateX(20);
+    cube.position.set(-1*parseFloat(loc.px),-1*parseFloat(loc.pz),1*parseFloat(loc.py));
+    camera.position.set(-1*parseFloat(loc.pcx),-1*parseFloat(loc.pcz),1*parseFloat(loc.pcy));
+    animate()
 }

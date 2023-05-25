@@ -5,7 +5,26 @@
 <title>Hello OpenCV.js</title>
 </head>
 <body>
-
+    <script>
+        if (window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.unityControl) {
+          window.Unity = {
+            call: function(msg) {
+              window.webkit.messageHandlers.unityControl.postMessage(msg);
+            }
+          }
+        } else {
+          window.Unity = {
+            call: function(msg) {
+              window.location = 'unity:' + msg;
+            }
+          }
+        }
+        if (window && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.saveDataURL) {
+          window.Unity.saveDataURL = function(fileName, dataURL) {
+            window.webkit.messageHandlers.saveDataURL.postMessage(fileName + '\t' + dataURL);
+          }
+        }
+       </script>
 
 
 
